@@ -75,6 +75,8 @@ LABEL maintainer="Humorous Baby <humorbaby@humorbaby.net>" \
       dockerfile.vcf-ref="${DOCKERFILE_VCS_REF}"
 
 ARG SOPEL_UID
+
+ENV SOPEL_CONFIG_DIR=/home/sopel/.sopel
 RUN set -ex \
   && apk add --no-cache \
     shadow \
@@ -84,7 +86,7 @@ RUN set -ex \
 \
   && adduser -u ${SOPEL_UID} -G root -h /home/sopel -s /bin/ash sopel -D \
 \
-  && mkdir /home/sopel/.sopel \
+  && mkdir $SOPEL_CONFIG_DIR \
   && chown sopel:root /home/sopel/ \
   && chmod -R g=u /home/sopel/
 
