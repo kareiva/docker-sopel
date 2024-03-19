@@ -78,7 +78,6 @@ ARG SOPEL_UID
 RUN set -ex \
   && apk add --no-cache \
     shadow \
-    su-exec \
   && apk add --no-cache --virtual .build-deps \
     gcc \
     build-base \
@@ -94,7 +93,7 @@ WORKDIR /home/sopel
 COPY --from=git-fetch --chown=sopel:root /sopel-src /home/sopel/sopel-src
 RUN set -ex \
   && cd ./sopel-src \
-  && su-exec sopel python -m pip install . \
+  && python -m pip install . \
   && cd .. \
   && rm -rf ./sopel-src \
   && apk del .build-deps
