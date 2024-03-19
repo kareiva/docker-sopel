@@ -89,10 +89,5 @@ if [ "${1}" = "sopel" ]; then
   exec "${@}"
 fi
 
-# Run arbitrary command, as specific user
-if [ -n "${USER}" ]; then
-  set -- su-exec "${USER}" "${@}"
-fi
-
 # Run arbitrary command, as root
 exec "${@}"
