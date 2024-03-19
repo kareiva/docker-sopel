@@ -10,7 +10,10 @@ ARG PYTHON_TAG=3.9-alpine
 # For security, these values are set past the upper limit of named users in most
 # linux environments. `chown` any volume mounts to the IDs specified here, or 
 # change to match your GID (and UID if desired) if you think its okay ¯\_(ツ)_/¯
-ARG SOPEL_GID=100000
+
+# for OKD/OpenShift, support arbitrary user ID's:
+# https://docs.openshift.com/container-platform/latest/openshift_images/create-images.html
+ARG SOPEL_GID=0
 ARG SOPEL_UID=100000
 ##
 
@@ -87,7 +90,8 @@ RUN set -ex \
   && adduser -u ${SOPEL_UID} -G sopel -h /home/sopel -s /bin/ash sopel -D \
 \
   && mkdir /home/sopel/.sopel \
-  && chown sopel:sopel /home/sopel/.sopel
+  && chown sopel:sopel /home/sopel/.sopel \
+  && chmod -R g=u /home/sopel/.sopel
 
 WORKDIR /home/sopel
 
