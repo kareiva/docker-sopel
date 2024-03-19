@@ -13,7 +13,6 @@ ARG PYTHON_TAG=3.9-alpine
 
 # for OKD/OpenShift, support arbitrary user ID's:
 # https://docs.openshift.com/container-platform/latest/openshift_images/create-images.html
-ARG SOPEL_GID=0
 ARG SOPEL_UID=100000
 ##
 
@@ -75,9 +74,7 @@ LABEL maintainer="Humorous Baby <humorbaby@humorbaby.net>" \
       dockerfile.vcs-url="https://github.com/sopel-irc/docker-sopel" \
       dockerfile.vcf-ref="${DOCKERFILE_VCS_REF}"
 
-ARG SOPEL_GID
 ARG SOPEL_UID
-
 RUN set -ex \
   && apk add --no-cache \
     shadow \
@@ -86,11 +83,10 @@ RUN set -ex \
     gcc \
     build-base \
 \
-  && addgroup -g ${SOPEL_GID} sopel \
-  && adduser -u ${SOPEL_UID} -G sopel -h /home/sopel -s /bin/ash sopel -D \
+  && adduser -u ${SOPEL_UID} -G root -h /home/sopel -s /bin/ash sopel -D \
 \
   && mkdir /home/sopel/.sopel \
-  && chown sopel:sopel /home/sopel/.sopel \
+  && chown sopel:root /home/sopel/.sopel \
   && chmod -R g=u /home/sopel/.sopel
 
 WORKDIR /home/sopel
