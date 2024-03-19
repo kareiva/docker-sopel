@@ -25,7 +25,7 @@ change_gid () {
 install_pip_package () {
   PACKAGE="${1}"
   echo -e "\033[44mInstalling package \"${PACKAGE}\" with pip...\033[0m"
-  su-exec sopel pip install --user "${PACKAGE}" || {
+  pip install --user "${PACKAGE}" || {
     RC=$?
     echo -e "\033[41mFAILED!\033[0m" && return $RC
   }
@@ -86,7 +86,7 @@ if [ "${1}" = "sopel" ]; then
 
   # Run sopel
   clear_pid_file
-  exec su-exec sopel "${@}"
+  exec "${@}"
 fi
 
 # Run arbitrary command, as specific user
