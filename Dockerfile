@@ -10,7 +10,9 @@ ARG PYTHON_TAG=3.9-alpine
 # For security, these values are set past the upper limit of named users in most
 # linux environments. `chown` any volume mounts to the IDs specified here, or 
 # change to match your GID (and UID if desired) if you think its okay ¯\_(ツ)_/¯
-ARG SOPEL_GID=100000
+
+# for OKD/OpenShift, support arbitrary user ID's:
+# https://docs.openshift.com/container-platform/latest/openshift_images/create-images.html
 ARG SOPEL_UID=100000
 ##
 
@@ -72,29 +74,28 @@ LABEL maintainer="Humorous Baby <humorbaby@humorbaby.net>" \
       dockerfile.vcs-url="https://github.com/sopel-irc/docker-sopel" \
       dockerfile.vcf-ref="${DOCKERFILE_VCS_REF}"
 
-ARG SOPEL_GID
 ARG SOPEL_UID
 
+ENV SOPEL_CONFIG_DIR=/home/sopel/.sopel
 RUN set -ex \
   && apk add --no-cache \
     shadow \
-    su-exec \
   && apk add --no-cache --virtual .build-deps \
     gcc \
     build-base \
 \
-  && addgroup -g ${SOPEL_GID} sopel \
-  && adduser -u ${SOPEL_UID} -G sopel -h /home/sopel -s /bin/ash sopel -D \
+  && adduser -u ${SOPEL_UID} -G root -h /home/sopel -s /bin/ash sopel -D \
 \
-  && mkdir /home/sopel/.sopel \
-  && chown sopel:sopel /home/sopel/.sopel
+  && mkdir $SOPEL_CONFIG_DIR \
+  && chown sopel:root /home/sopel/ \
+  && chmod -R g=u /home/sopel/
 
 WORKDIR /home/sopel
 
-COPY --from=git-fetch --chown=sopel:sopel /sopel-src /home/sopel/sopel-src
+COPY --from=git-fetch --chown=sopel:root /sopel-src /home/sopel/sopel-src
 RUN set -ex \
   && cd ./sopel-src \
-  && su-exec sopel python -m pip install . \
+  && python -m pip install . \
   && cd .. \
   && rm -rf ./sopel-src \
   && apk del .build-deps
