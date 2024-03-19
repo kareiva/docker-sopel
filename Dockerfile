@@ -86,8 +86,8 @@ RUN set -ex \
   && adduser -u ${SOPEL_UID} -G root -h /home/sopel -s /bin/ash sopel -D \
 \
   && mkdir /home/sopel/.sopel \
-  && chown sopel:root /home/sopel/.sopel \
-  && chmod -R g=u /home/sopel/.sopel
+  && chown sopel:root /home/sopel/ \
+  && chmod -R g=u /home/sopel/
 
 WORKDIR /home/sopel
 
